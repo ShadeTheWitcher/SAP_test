@@ -1,0 +1,8 @@
+applications:
+  - name: my-bookshop-app-test
+    path: .
+    memory: 256M
+    instances: 1
+    buildpacks:
+      - nodejs_buildpack
+    default-route: true
