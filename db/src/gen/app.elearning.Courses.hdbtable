@@ -1,0 +1,13 @@
+COLUMN TABLE app_elearning_Courses (
+  createdAt TIMESTAMP,
+  createdBy NVARCHAR(255),
+  modifiedAt TIMESTAMP,
+  modifiedBy NVARCHAR(255),
+  course_id NVARCHAR(36) NOT NULL,
+  course_name NVARCHAR(50),
+  price NVARCHAR(10),
+  language_code NVARCHAR(14),
+  PRIMARY KEY(course_id)
+) WITH ASSOCIATIONS (
+  MANY TO ONE JOIN sap_common_Languages AS "LANGUAGE" ON ("LANGUAGE".code = language_code)
+)

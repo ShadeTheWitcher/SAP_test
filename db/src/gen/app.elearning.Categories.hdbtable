@@ -1,0 +1,6 @@
+COLUMN TABLE app_elearning_Categories (
+  id NVARCHAR(36) NOT NULL,
+  name NVARCHAR(50),
+  description NVARCHAR(50),
+  PRIMARY KEY(id)
+)

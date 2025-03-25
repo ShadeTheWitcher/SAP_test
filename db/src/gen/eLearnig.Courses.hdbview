@@ -1,0 +1,13 @@
+VIEW eLearnig_Courses AS SELECT
+  Courses_0.createdAt,
+  Courses_0.createdBy,
+  Courses_0.modifiedAt,
+  Courses_0.modifiedBy,
+  Courses_0.course_id,
+  Courses_0.course_name,
+  Courses_0.price,
+  Courses_0.language_code
+FROM app_elearning_Courses AS Courses_0
+WITH ASSOCIATIONS (
+  MANY TO ONE JOIN eLearnig_Languages AS "LANGUAGE" ON ("LANGUAGE".code = language_code)
+)
