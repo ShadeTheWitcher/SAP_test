@@ -7,3 +7,5 @@ service mysrvdemo {
     function myfoobar(msg:String) returns String;
 
 }
+
+//http://localhost:4004/odata/v4/mysrvdemo/myfoobar(msg='asdas')    url de la función
