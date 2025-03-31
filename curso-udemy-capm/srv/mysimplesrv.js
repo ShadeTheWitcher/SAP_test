@@ -11,10 +11,37 @@ module.exports = srv => {
 
   srv.on("READ", "StudentsSRV", async (req) => {  // Hacemos la función async
     const { SELECT } = cds.ql;
-    const result = await SELECT.from(Students) // Limitamos a 10 resultados
+    const result = await SELECT.from(Students) // Obtenemos todos los estudiantes
     console.log(result); // Imprimimos los resultados en la consola
     return result;
   });
+
+  //Usando filtros en la consulta
+  // url http://localhost:4004/odata/v4/mysrvdemo/StudentsSRV2(email='demo@demo.com')
+  srv.on("READ", "StudentsSRV2", async (req) => {  // Hacemos la función async
+    const { SELECT } = cds.ql;
+    const aFilter = req.query.SELECT.where;
+
+    console.log("Filter applied:", aFilter);
+
+    if (typeof aFilter === 'undefined') {
+      let tempResult = await SELECT.from(Students).limit(2); // Obtenemos todos los estudiantes
+      tempResult = tempResult.filter(row => row.first_name === "john");
+      return tempResult;
+    }
+    
+    const result = await SELECT.from(Students).where(aFilter); // Obtenemos todos los estudiantes
+    console.log(result); // Imprimimos los resultados en la consola
+    return result;
+
+    // const { email } = req.data;  // Extraemos el email desde la key
+    // console.log("Email filter:", email);
+
+    // const result = await SELECT.from(Students).where({ email });
+    // console.log(result);
+    // return result;
+  });
+
 
 
   srv.on('READ', 'GetStudent', async (req) => {
