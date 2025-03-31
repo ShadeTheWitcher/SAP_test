@@ -10,7 +10,8 @@ module.exports = srv => {
   }
 
   srv.on("READ", "StudentsSRV", async (req) => {  // Hacemos la función async
-    const result = await cds.run(SELECT.from(Students)); // Ejecutamos la consulta
+    const { SELECT } = cds.ql;
+    const result = await SELECT.from(Students) // Limitamos a 10 resultados
     console.log(result); // Imprimimos los resultados en la consola
     return result;
   });
@@ -18,7 +19,7 @@ module.exports = srv => {
 
   srv.on('READ', 'GetStudent', async (req) => {
     console.log('GET request received for GetStudent');  // Log para asegurarte de que la solicitud se recibe
-    const {SELECT} = cds;
+    const {SELECT} = cds.ql;
     const aFilter = req.query.SELECT?.where;
   
     if (aFilter) {
