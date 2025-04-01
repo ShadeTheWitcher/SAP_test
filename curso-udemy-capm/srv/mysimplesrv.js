@@ -2,8 +2,6 @@ const cds = require("@sap/cds");
 const { Students } = cds.entities("myCompany.hr.lms");
 
 module.exports = srv => {
-  
-
   if (!Students) {
     console.error("❌ ERROR: La entidad 'Students' no está definida en el servicio.");
     return;
@@ -16,21 +14,35 @@ module.exports = srv => {
     return result;
   });
 
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
+  
   //Usando filtros en la consulta
   // url http://localhost:4004/odata/v4/mysrvdemo/StudentsSRV2(email='demo@demo.com')
   srv.on("READ", "StudentsSRV2", async (req) => {  // Hacemos la función async
     const { SELECT } = cds.ql;
-    const aFilter = req.query.SELECT.where;
 
+    // Inspeccionar req.params para capturar filtros directamente
+    console.log("Request params:", req.params);
+
+    // Inspeccionar req.query para entender qué filtros llegan
+    console.log("Request query:", req.query);
+
+    const aFilter = req.query.SELECT.where;
     console.log("Filter applied:", aFilter);
+
 
     if (typeof aFilter === 'undefined') {
       let tempResult = await SELECT.from(Students).limit(2); // Obtenemos todos los estudiantes
-      tempResult = tempResult.filter(row => row.first_name === "john");
+      //tempResult = tempResult.filter(row => row.first_name === "john");
+      console.log("Result without filter:", tempResult);
       return tempResult;
     }
     
-    const result = await SELECT.from(Students).where(aFilter); // Obtenemos todos los estudiantes
+    const result = await SELECT.from(Students).where({
+      email: "ajay@demo.com"
+    }); // Obtenemos todos los estudiantes
     console.log(result); // Imprimimos los resultados en la consola
     return result;
 
