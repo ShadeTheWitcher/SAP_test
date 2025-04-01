@@ -33,17 +33,12 @@ module.exports = srv => {
     console.log("Filter applied:", aFilter);
 
 
-    if (typeof aFilter === 'undefined') {
-      let tempResult = await SELECT.from(Students).limit(2); // Obtenemos todos los estudiantes
-      //tempResult = tempResult.filter(row => row.first_name === "john");
-      console.log("Result without filter:", tempResult);
-      return tempResult;
+    if (typeof aFilter !== 'undefined') {
+      return await SELECT.from(Students);
     }
     
-    const result = await SELECT.from(Students).where({
-      email: "ajay@demo.com"
-    }); // Obtenemos todos los estudiantes
-    console.log(result); // Imprimimos los resultados en la consola
+    const result = await SELECT.from(Students)
+    console.log("Result without filter:",result); // Imprimimos los resultados en la consola
     return result;
 
     // const { email } = req.data;  // Extraemos el email desde la key
@@ -54,6 +49,13 @@ module.exports = srv => {
     // return result;
   });
 
+  srv.after('READ', 'StudentsSRV2', data =>{
+    return data.map(d =>{
+      d.full_name = d.first_name + " " + d.last_name;
+      console.log(d);
+      return d;
+    });
+  });
 
 
   srv.on('READ', 'GetStudent', async (req) => {
@@ -75,6 +77,51 @@ module.exports = srv => {
     });
   });
 
+
+
+// -------------------------update student ------------------------------------------
+// http://localhost:4004/odata/v4/mysrvdemo/UpdateStudent1
+
+  srv.on("CREATE", "UpdateStudent1", async (req,res) => { //no funciona
+    let firstName = req.data.first_name;
+    let studentEmail = req.data.email;
+
+    cds.transaction(req)
+    .run(() => [
+      UPDATE(Students)
+      .set({
+        first_name: firstName 
+      })
+      .where({first_name: "Mr. "+ firstName})
+    ])
+    .then((resolve, reject) => {
+      console.log("resolve", resolve);
+      console.log("reject", reject);
+
+      if(typeof resolve !== "undefined" && resolve >= 1){
+        return req.data;
+      }else{
+        res.error(409, "Error  Record no found")
+      }
+    })
+      .catch((err) => {
+        console.log(err);
+      res.error(500, "Error in Updating Record");
+    });
+    console.log("before end", returnData)
+    
+      return req.data;
+  });
+
+
+
+
+
+
+
+
+
+// ----------codigo curso ---------------
   srv.on("CREATE", "UpdateStudent", async (req, res) => {
     let firstName = req.data.first_name;
     let lastName = req.data.last_name;
@@ -110,6 +157,8 @@ module.exports = srv => {
     return returnData;
   });
 
+  
+// ----------codigo curso ---------------
   srv.on("CREATE", "InsertStudent", async (req, res) => {
     let returnData = await cds
       .transaction(req)
@@ -139,6 +188,7 @@ module.exports = srv => {
     return returnData;
   });
 
+// ----------codigo curso ---------------
   srv.on("CREATE", "DeleteStudent", async (req, res) => {
     let returnData = await cds
       .transaction(req)
